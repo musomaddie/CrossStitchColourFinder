@@ -1,4 +1,6 @@
 import csv
+from os import listdir
+from os.path import isfile, join
 
 # Not going to read the file using csv since space is a valid character. Can do
 # by counting indices instead.
@@ -26,47 +28,18 @@ def transform_spaced_page(filename):
     with_commas = [[char for count, char in enumerate(line) if count % 2 == 0]
                    for line in lines]
 
-    with open("{filename}.csv", "w") as f:
+    with open(f"{filename}.csv", "w") as f:
         writer = csv.writer(f)
         writer.writerows(with_commas)
 
 
 def convert_all_pages(folder):
     """ Converts all the pages found inside the specified folder. """
-    pass
+    onlyfiles = [f for f in listdir(folder) if isfile(join(folder, f))]
+    filenames = [f'{folder}{name.replace(".txt", "")}' for name in onlyfiles]
+    for filename in filenames:
+        transform_spaced_page(filename)
 
 
 if __name__ == "__main__":
-    pass
-#    fix_newlines("pages/Hyacinth_Hippo/page168.txt")
-
-
-"""
-def fix_newlines(filename):
-    contents = _read_file(filename)
-
-    contents_all = "".join(contents)
-    contents_str = contents_all.replace("\n", " ")
-    print(contents_str)
-
-    desired_line_length = 55  # TODO: get from config
-    # Go through them all
-    with_commas = []
-    current_line = []
-    for count, char in enumerate(contents_str):
-        print(f"{count}: {char}")
-        if (count % 2 == 0):
-            current_line.append(char)
-            # Need to split if I've hit 55
-            value = count // 2 + 1
-            if value % desired_line_length == 0:
-                with_commas.append(current_line)
-                current_line = []
-
-        # if count == 250:
-        #     break
-
-    with open("testing.csv", "w") as f:
-        writer = csv.writer(f)
-        writer.writerows(with_commas)
-"""
+    convert_all_pages("pages/Hyacinth_Hippo/")
